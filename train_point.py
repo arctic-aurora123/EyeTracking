@@ -6,11 +6,14 @@ from torch.utils.data import DataLoader, Dataset
 from Eyedata import EyeDataset
 from EyeNet import EyeTrackNet_seq, EyeTrackNet_point
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 if __name__ == "__main__":
+    
+    writer = SummaryWriter("logs/0915_rnn")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    data_path = './train_data.csv'
-    dataset = EyeDataset(data_path, overlap = True, window_size = 25, step_size = 5, ignore_first_sec = 5)
+    data_path = './data/train_data.csv'
+    dataset = EyeDataset(data_path, overlap = True, window_size = 10, step_size = 5, ignore_first_sec = 5)
 
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8, 0.2])
 
@@ -34,6 +37,7 @@ if __name__ == "__main__":
             for batch_idx, (inputs, targets) in enumerate(train_data):
                 inputs = inputs.to(device)
                 targets = targets.to(device)
+                
                 targets = torch.mean(targets, dim=1)
 
                 optimizer.zero_grad()
@@ -46,6 +50,7 @@ if __name__ == "__main__":
                 pbar.update(1) 
         pbar.close()   
         print(f"Train loss: {sum/len(train_data)}")    
+        writer.add_scalar("Loss/train", loss.item(), epoch) 
             
         model.eval()  
         with torch.no_grad():
@@ -61,6 +66,8 @@ if __name__ == "__main__":
                     pbar.update(1)    
             pbar.close()
             print(f"Test loss: {test_loss / len(test_data)}")
+            writer.add_scalar("Loss/test", test_loss / len(test_data), epoch)
 
     torch.save(model, 'point_model.pth')
     print("model saved at: ./point_model.pth")
+    writer.close()

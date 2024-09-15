@@ -9,16 +9,16 @@ from tqdm import tqdm
 
 if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    data_path = './train_data.csv'
-    dataset = EyeDataset(data_path, overlap = True, window_size = 100, step_size = 10, ignore_first_sec = 5)
+    data_path = './data/train_data.csv'
+    dataset = EyeDataset(data_path, overlap = True, window_size = 25, step_size = 5, ignore_first_sec = 5)
 
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8, 0.2])
 
     print(f"Train Dataset size: {len(train_dataset.indices)}")
     print(f"Test Dataset size: {len(test_dataset.indices)}")
 
-    train_data = DataLoader(train_dataset,batch_size=64, shuffle=True, drop_last=True)
-    test_data = DataLoader(test_dataset,batch_size=64, shuffle=True, drop_last=True)
+    train_data = DataLoader(train_dataset,batch_size=64, shuffle=False, drop_last=True)
+    test_data = DataLoader(test_dataset,batch_size=64, shuffle=False, drop_last=True)
 
     model = EyeTrackNet_seq().to(device)
     

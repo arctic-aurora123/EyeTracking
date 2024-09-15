@@ -42,3 +42,17 @@ class EyeTrackNet_point(nn.Module):
         output = lstm_out[:, -1, :]  # [batch_size, hidden_size]
         out = self.dense(output)  # [batch_size, output_size]
         return out
+    
+    
+class EyeTrackNet_MLP(nn.Module):
+    def __init__(self, input_size=40, hidden_size=256, output_size=2):
+        super(EyeTrackNet_MLP, self).__init__()
+        self.mlp = nn.Sequential(nn.Linear(input_size, hidden_size), 
+                                nn.ReLU(),
+                                nn.Linear(hidden_size, hidden_size), 
+                                nn.ReLU(), 
+                                nn.Linear(hidden_size, hidden_size), 
+                                nn.ReLU(), 
+                                nn.Linear(hidden_size, output_size))
+    def forward(self, x):
+        return self.mlp(x)
