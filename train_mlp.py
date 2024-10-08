@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     data_path = './data/train_data.csv'
-    dataset = EyeDataset(data_path, overlap = True, window_size = 10, step_size = 1, ignore_first_sec = 5)
+    dataset = EyeDataset(data_path, overlap = True, window_size = 100, step_size = 1, ignore_first_sec = 5)
 
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8, 0.2])
 
@@ -70,6 +70,6 @@ if __name__ == "__main__":
             print(f"Test loss: {test_loss / len(test_data)}")
             writer.add_scalar("Loss/test", test_loss / len(test_data), epoch)
 
-    torch.save(model, 'mlp_model.pth')
-    print("model saved at: ./mlp_model.pth")
+    torch.save(model, 'big_mlp_model.pth')
+    print("model saved at: ./big_mlp_model.pth")
     writer.close()

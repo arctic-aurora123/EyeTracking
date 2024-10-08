@@ -9,7 +9,8 @@ from tqdm import tqdm
 
 if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    data_path = './data/train_data.csv'
+    # data_path = './data/single_point/train_data.csv'
+    data_path = './data/continuous/continuous_train.csv'
     dataset = EyeDataset(data_path, overlap = True, window_size = 25, step_size = 5, ignore_first_sec = 5)
 
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8, 0.2])
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     train_data = DataLoader(train_dataset,batch_size=64, shuffle=False, drop_last=True)
     test_data = DataLoader(test_dataset,batch_size=64, shuffle=False, drop_last=True)
 
-    model = EyeTrackNet_seq().to(device)
+    model = EyeTrackNet_seq(output_size=3).to(device)
     
     criterion = nn.MSELoss()
     lr = 0.005
@@ -31,16 +32,18 @@ if __name__ == "__main__":
         model.train()
         with tqdm(total=len(train_data), desc=f"Train epoch {epoch}: ") as pbar:
             sum = 0
-            for batch_idx, (inputs, targets) in enumerate(train_data):
+            for batch_idx, (inputs, pos_target, blink_target) in enumerate(train_data):
                 
-                # print(inputs.shape)
+                print(inputs.shape, pos_target.shape, blink_target.shape)
                 inputs = inputs.to(device)
-                targets = targets.to(device)
+                pos_target = pos_target.to(device)
+                blink_target = blink_target.to(device)
                 
                 optimizer.zero_grad()
-                outputs = model(inputs)
-                
-                loss = criterion(outputs, targets)
+                (pos_x, pos_y), blink = model(inputs)
+                pos = torch.cat([pos_x, pos_y], dim=1)
+                loss = nn.MSELoss(pos, pos_target) + nn.MSELoss(blink, blink_target)
+                # loss = criterion(outputs, targets)
                 sum += loss.item()
                 loss.backward()
                 optimizer.step()
@@ -61,5 +64,5 @@ if __name__ == "__main__":
             pbar.close()
             print(f"Test loss: {test_loss / len(test_data)}")
 
-    torch.save(model, 'seq_model.pth')
-    print("model saved at: ./seq_model.pth")
+    torch.save(model, 'continuous_seq_model.pth')
+    print("model saved at: ./continuous_seq_model.pth")

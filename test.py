@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def update(frame): 
     point.set_data(predict_points[frame:frame+1, 0], predict_points[frame:frame+1, 1])
-    point_target.set_data(targets[frame-50:frame-49, 0], targets[frame-50:frame-49, 1])
+    point_target.set_data(targets[frame-step_size*10:frame-step_size*10+1, 0], targets[frame-step_size*10:frame-step_size*10+1, 1])
     return point, point_target
 
 def moving_average(x, w):
@@ -26,8 +26,8 @@ if __name__ == '__main__':
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     data_path = './data/std_data1.csv'
-    model_path = './model/mlp_model.pth'
-    
+    model_path = './model/point_model.pth'
+
     window_size = 10
     step_size = 5
     ignore_first_sec = 5

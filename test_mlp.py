@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def update(frame): 
     point.set_data(predict_points[frame:frame+1, 0], predict_points[frame:frame+1, 1])
-    point_target.set_data(targets[frame-50:frame-49, 0], targets[frame-50:frame-49, 1])
+    point_target.set_data(targets[frame-step_size*10:frame-step_size*10+1, 0], targets[frame-step_size*10:frame-step_size*10+1, 1])
     return point, point_target
 
 def moving_average(x, w):
@@ -26,12 +26,12 @@ if __name__ == '__main__':
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     data_path = './data/std_data1.csv'
-    model_path = './model/mlp_model.pth'
+    model_path = './model/big_mlp_model.pth'
     
-    window_size = 10
+    window_size = 100
     step_size = 5
     ignore_first_sec = 5
-    moving_window = 5
+    moving_window = 10
     batch_size = 64
     
     dataset = EyeDataset(data_path, overlap = True, window_size = window_size,
@@ -77,6 +77,6 @@ if __name__ == '__main__':
     point_target, = ax.plot(targets[:,0], targets[:,1], 'bx')
     
     anim = animation.FuncAnimation(fig, update, frames=targets.shape[0], interval=2, blit=True)
-    # plt.show()
-    anim.save(f'plot3.mp4', writer='ffmpeg', fps=60)
+    plt.show()
+    anim.save(f'plot_big_mlp.mp4', writer='ffmpeg', fps=60)
     
