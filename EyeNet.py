@@ -44,12 +44,12 @@ class EyeTrackNet_point(nn.Module):
         return out
 
 class EyeTrackNet_MLP(nn.Module):
-    def __init__(self):
+    def __init__(self, input_channel=4, input_seq_len=80, output_size=3):
         super(EyeTrackNet_MLP, self).__init__()
-        self.input_size = 400
+        self.input_size = input_channel * input_seq_len
         self.hidden_size_1 = 512
         self.hidden_size_2 = 256
-        self.output_size = 2
+        self.output_size = output_size
         self.mlp = nn.Sequential(nn.Linear(self.input_size, self.hidden_size_1), 
                                 nn.ReLU(),
                                 nn.Linear(self.hidden_size_1, self.hidden_size_1), 

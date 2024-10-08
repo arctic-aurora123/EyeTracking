@@ -32,7 +32,7 @@ def lpf(data, lowcut, order=2):
 def process_csv(csv_file):
     data = pd.read_csv(csv_file)
     vl = minmax_normalize(data['CH1'].values)
-    vr= minmax_normalize(data['CH3'].values)
+    vr = minmax_normalize(data['CH3'].values)
     hl = minmax_normalize(data['CH2'].values)
     hr = minmax_normalize(data['CH4'].values)
     
@@ -63,6 +63,8 @@ def process_data(csv_file, pkl_file, blink_period, press_delay):
         pos_x = np.linspace(temp.pos_x[0], temp.pos_x[-1], end-start)
         g = inter.interp1d(temp.pos_x, temp.pos_y, kind ="linear")
         pos_y = g(pos_x)
+        pos_x = (pos_x - 1280) / 2560 
+        pos_y = (pos_y - 720) / 1440
         
         blink_label = np.zeros_like(pos_x)
         
@@ -84,10 +86,18 @@ def process_data(csv_file, pkl_file, blink_period, press_delay):
 
 if __name__ == "__main__":
     processed = []
-    for j in range(17):
+    # for j in range(15):
+    #     processed.append(process_data(f"{csv_path}/Device_{j}_Volts.csv", f"{pkl_path}/Eyedata_{j}.pkl", 0.3, 0.1))
+        
+    # df = pd.concat(processed)
+    # df.rename(columns={0:'vl', 1:'vr', 2:'hl', 3:'hr', 4:'pos_x', 5:'pos_y', 6:'blink_label'}, inplace=True)
+    # print(df)
+    # df.to_csv("./data/continuous/continuous_train.csv", index=False)
+    
+    for j in range(15, 17):
         processed.append(process_data(f"{csv_path}/Device_{j}_Volts.csv", f"{pkl_path}/Eyedata_{j}.pkl", 0.3, 0.1))
         
     df = pd.concat(processed)
     df.rename(columns={0:'vl', 1:'vr', 2:'hl', 3:'hr', 4:'pos_x', 5:'pos_y', 6:'blink_label'}, inplace=True)
     print(df)
-    df.to_csv("./data/continuous/continuous_train.csv", index=False)
+    df.to_csv("./data/continuous/continuous_test.csv", index=False)

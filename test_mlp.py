@@ -28,11 +28,11 @@ if __name__ == '__main__':
     data_path = './data/std_data1.csv'
     model_path = './model/big_mlp_model.pth'
     
-    window_size = 100
+    window_size = 50
     step_size = 5
     ignore_first_sec = 5
     moving_window = 10
-    batch_size = 64
+    batch_size = 128
     
     dataset = EyeDataset(data_path, overlap = True, window_size = window_size,
                         step_size = step_size, ignore_first_sec = ignore_first_sec)
