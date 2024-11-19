@@ -34,8 +34,7 @@ class EyeDataset(Dataset):
     
     def __getitem__(self, idx):
         std_signal = self.data[idx, :, 0:4]
-        # diff_signal = self.data[idx, :, 4:6]
-        screen_pos = self.data[idx, :, 6:8]
+        screen_pos = self.data[idx, :, 4:6]
         if self.transform:
             signal = self.transform(signal)
         

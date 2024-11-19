@@ -22,12 +22,14 @@ class EyeAnnotation(RFUniverseBaseEnv):
         self.listener_thread.start()
 
     def listen_key(self):
-        while 1:
-            keyboard.wait('x')
-            time.sleep(0.1)
-            _, blink = S.read()
-            new_data.blink_time.append(blink)
-            print(f"c_pressed: {blink}")
+        # while 1:
+        #     keyboard.wait('x')
+        #     time.sleep(0.1)
+        #     _, blink = S.read()
+        #     new_data.blink_time.append(blink)
+        #     print(f"c_pressed: {blink}")
+        
+        pass
 
     def Pos(self, obj):
         self.pos = obj
@@ -50,7 +52,7 @@ class EyeAnnotation(RFUniverseBaseEnv):
 if __name__ == "__main__":
     idx = 0
     process = EyeAnnotation()
-    S = SerialDataReader("COM7", 1000000)
+    S = SerialDataReader("COM7", 1000000) 
     data = []
     while 1:
         new_data = EyeData()
@@ -62,5 +64,5 @@ if __name__ == "__main__":
         idx+=1
         print(new_data.blink_time)
         data.append(new_data)
-        with open('Eyedata_16.pkl', 'wb') as f:
-            pickle.dump(data, f)
+        with open('note_data/Eyedata_29.pkl', 'wb') as f:
+            pickle.dump(data, f) 
